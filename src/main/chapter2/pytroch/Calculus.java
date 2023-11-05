@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package main.chapter2.pytroch;
 
 import java.io.IOException;
@@ -73,6 +70,10 @@ public class Calculus {
     //sudo apt install desktop-file-utils
     //update-desktop-database
     Plot.show(figure);
+    System.exit(0);
+    
+    //Exercises
+    
     
   }
 

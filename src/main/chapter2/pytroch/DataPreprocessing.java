@@ -34,14 +34,14 @@ public class DataPreprocessing {
 
     String dataFile = "../data/house_tiny.csv";
 
-// Create file
+    // Create file
     File f = new File(dataFile);
     f.createNewFile();
 
-// Write to file
+    // Write to file
     try (FileWriter writer = new FileWriter(dataFile)) {
       writer.write("NumRooms,Alley,Price\n"); // Column names
-      writer.write("NA,Pave,127500\n");  // Each row represents a data example
+      writer.write("NA,Pave,127500\n"); // Each row represents a data example
       writer.write("2,NA,106000\n");
       writer.write("4,NA,178100\n");
       writer.write("NA,NA,140000\n");
@@ -72,28 +72,33 @@ public class DataPreprocessing {
     List<BooleanColumn> dummies = colAlley.getDummies();
     input.removeColumns(colAlley);
     input.addColumns(DoubleColumn.create("Alley_Pave", dummies.get(0).asDoubleArray()),
-        DoubleColumn.create("Alley_nan", dummies.get(1).asDoubleArray())
-    );
+        DoubleColumn.create("Alley_nan", dummies.get(1).asDoubleArray()));
 
     System.out.println("Input After creating dummies from Alley Column");
     System.out.println(input.printAll());
 
     double[][] InputMatrix = input.as().doubleMatrix();
     double[][] outputMatrix = output.as().doubleMatrix();
-    //To collections or to arrays 
+    // To collections or to arrays
 
-    DoublePointer inputDoublePointer = new DoublePointer(Arrays.stream(InputMatrix).flatMapToDouble(Arrays::stream).toArray());
-    DoublePointer outputDoublePointer = new DoublePointer(Arrays.stream(outputMatrix).flatMapToDouble(Arrays::stream).toArray());
+    DoublePointer inputDoublePointer = new DoublePointer(
+        Arrays.stream(InputMatrix).flatMapToDouble(Arrays::stream).toArray());
+    DoublePointer outputDoublePointer = new DoublePointer(
+        Arrays.stream(outputMatrix).flatMapToDouble(Arrays::stream).toArray());
 
-    Tensor inputTensor = torch.from_blob(inputDoublePointer, new long[]{InputMatrix.length, InputMatrix[InputMatrix.length - 1].length}, new TensorOptions(torch.ScalarType.Double));
-    Tensor outputTensor = torch.from_blob(outputDoublePointer, new long[]{outputMatrix.length, outputMatrix[outputMatrix.length - 1].length}, new TensorOptions(torch.ScalarType.Double));
+    Tensor inputTensor = torch.from_blob(inputDoublePointer,
+        new long[] { InputMatrix.length, InputMatrix[InputMatrix.length - 1].length },
+        new TensorOptions(torch.ScalarType.Double));
+    Tensor outputTensor = torch.from_blob(outputDoublePointer,
+        new long[] { outputMatrix.length, outputMatrix[outputMatrix.length - 1].length },
+        new TensorOptions(torch.ScalarType.Double));
 
     torch.print(inputTensor);
     out.println("=====");
     torch.print(outputTensor);
     out.println("=====");
 
-    //Trying to add new columns based on number of rooms.  
+    // Trying to add new columns based on number of rooms.
     IntColumn colRooms = (IntColumn) input.column("NumRooms");
 
     input.addColumns(DoubleColumn.create("Stdiuo", colRooms.asList().stream().map(e -> e <= 2 ? 1 : 0).toList()));
